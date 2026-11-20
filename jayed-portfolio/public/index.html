@@ -63,7 +63,7 @@ input,textarea{width:100%;background:#1c1c1c;border:1px solid var(--line);color:
 import { upload } from "https://esm.sh/@vercel/blob@1/client";
 
 let S = { name:"", tag:"", bio:"", email:"", links:[], works:[], exp:[], ach:[] };
-let edit = false, admin = false, dirty = false, filter = "All", loaded = false;
+let edit = false, admin = false, dirty = false, filter = "All", loaded = false, aiOff = false;
 const files = new Map();
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
@@ -165,36 +165,53 @@ async function previewOf(src) {
   return c.toDataURL("image/jpeg", 0.8).split(",")[1];
 }
 async function gen(w) {
+  if (aiOff) { toast("Auto titles are switched off. Type a title and description in the boxes on the card.", 6000); return false; }
   try {
     let src = files.get(w.url);
     if (!src) src = await (await fetch(w.url)).blob();
     const r = await api("/api/describe", "POST", { image: await previewOf(src), cats: cats() });
     Object.assign(w, { title: r.title, desc: r.desc, cat: r.cat }); dirty = true; return true;
-  } catch (e) { toast("Couldn't write that one: " + e.message, 7000); return false; }
+  } catch (e) {
+    if (/ANTHROPIC_API_KEY/.test(e.message)) { aiOff = true; return false; }
+    toast("Couldn't write that one: " + e.message, 7000); return false;
+  }
 }
 async function autoAll() {
+  if (aiOff) { toast("Auto titles are switched off. Type a title and description in the boxes on each card.", 7000); return; }
   const todo = S.works.filter((w) => w.title === "Untitled design" || !w.desc); let i = 0;
-  for (const w of todo) { toast(`Writing ${++i} of ${todo.length}…`, 0); await gen(w); }
-  render(); toast(todo.length ? "Done. Check the titles, then press Save changes." : "Everything already has a title.");
+  for (const w of todo) { if (aiOff) break; toast(`Writing ${++i} of ${todo.length}…`, 0); await gen(w); }
+  render();
+  if (aiOff) toast("Auto titles are switched off. Type a title and description in the boxes on each card.", 7000);
+  else toast(todo.length ? "Done. Check the titles, then press Save changes." : "Everything already has a title.");
 }
 async function addFiles(list) {
   const fl = [...list].filter((f) => f.type.startsWith("image/"));
   if (!edit || !fl.length) return;
-  let n = 0;
+  let n = 0, added = 0;
   for (const f of fl) {
     try {
       toast(`Uploading ${++n} of ${fl.length}…`, 0);
       const b = await upload("designs/" + f.name, f, { access: "public", handleUploadUrl: "/api/upload", multipart: f.size > 8e6 });
       files.set(b.url, f);
       S.works.push({ url: b.url, title: "Untitled design", cat: "Uncategorized", desc: "", year: String(new Date().getFullYear()), ts: Date.now() + n, feat: false });
-      dirty = true;
-    } catch (e) { toast("Upload failed: " + e.message, 7000); }
+      dirty = true; added++;
+    } catch (e) { toast("Upload failed: " + e.message + "  (tap this message to close it)", 0); }
   }
-  render(); toast("Uploaded. Writing titles…", 0); await autoAll();
+  render();
+  if (added) {
+    await autoAll();
+    await save();
+    toast(`Added ${added} design${added > 1 ? "s" : ""} and saved.` + (aiOff ? " Now type a title and description on each card, then press Save changes." : ""), 9000);
+  }
 }
 $("#up").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
-document.addEventListener("dragover", (e) => { if (edit) e.preventDefault(); });
-document.addEventListener("drop", (e) => { if (edit) { e.preventDefault(); addFiles(e.dataTransfer.files); } });
+document.addEventListener("dragover", (e) => e.preventDefault());
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (!edit) { toast("First click Admin at the very bottom of the page and enter your passcode.", 7000); return; }
+  addFiles(e.dataTransfer.files);
+});
+$("#toast").addEventListener("click", () => $("#toast").classList.add("hide"));
 document.addEventListener("paste", (e) => { if (edit && e.clipboardData) addFiles(e.clipboardData.files); });
 
 render();
