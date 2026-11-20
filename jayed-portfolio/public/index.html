@@ -23,9 +23,9 @@ h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .chip,.btn{background:var(--panel);border:1px solid var(--line);color:var(--tx);border-radius:4px;padding:5px 12px;font:inherit;font-size:13px}
 .chip.on,.btn.pri{background:var(--ac);border-color:var(--ac);color:#04121d;font-weight:600}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.grid{columns:250px;column-gap:16px}.grid .card{display:block;break-inside:avoid;margin:0 0 16px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#1a1a1a}
+.card img{display:block;width:100%;height:auto;background:#1a1a1a}
 .card .b{padding:12px 14px 14px}.card h3{margin:0 0 2px;font-size:16px}
 .card .m{color:var(--ac);font-size:12px;margin-bottom:6px}.card p{margin:0;color:var(--mu);font-size:14px}
 .row{display:grid;grid-template-columns:160px 1fr;gap:6px 24px;padding:14px 0;border-bottom:1px solid #333}
@@ -44,6 +44,19 @@ input,textarea{width:100%;background:#1c1c1c;border:1px solid var(--line);color:
 #modal:not(.hide){display:flex}
 #modal .box{background:var(--panel);border:1px solid var(--ac);border-radius:8px;padding:20px;width:100%;max-width:380px}
 #modal p{margin:0 0 12px}#modal .acts{display:flex;gap:8px;justify-content:flex-end}
+.pic{position:relative;line-height:0}
+.pic::after{content:"";position:absolute;inset:0}
+.pic[data-open]{cursor:zoom-in}
+.pic img,#lb img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#lb{position:fixed;inset:0;background:rgba(10,10,10,.94);z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+#lb.hide{display:none!important}
+#lb .pic{max-width:94vw;max-height:80vh;display:flex;cursor:default}
+#lb img{max-width:94vw;max-height:80vh;width:auto;height:auto;object-fit:contain}
+#lbc{color:var(--mu);margin-top:12px;text-align:center;max-width:640px;font-size:14px}
+#lbc b{color:var(--tx);display:block;font-size:16px}
+#lb button{position:absolute;background:rgba(60,60,60,.85);border:1px solid var(--line);color:var(--tx);font-size:26px;line-height:1;width:44px;height:44px;border-radius:50%}
+#lbx{top:14px;right:14px}#lbp{left:12px;top:50%}#lbn{right:12px;top:50%}
+@media print{.card img,#lb{display:none!important}}
 @media(max-width:600px){.row{grid-template-columns:1fr}}
 </style>
 </head>
@@ -58,9 +71,11 @@ input,textarea{width:100%;background:#1c1c1c;border:1px solid var(--line);color:
 <button class="btn" id="logout">Log out</button></div></div>
 <main class="wrap" id="app"></main>
 <div id="toast" class="hide"></div>
+<div id="lb" class="hide"><button id="lbx" aria-label="Close">×</button><button id="lbp" aria-label="Previous">‹</button><button id="lbn" aria-label="Next">›</button><div class="pic"><img id="lbi" alt="" draggable="false"></div><div id="lbc"></div></div>
 <div id="modal" class="hide"><div class="box"><p id="mt"></p><input id="mi" type="password" autocomplete="off"><div class="acts"><button class="btn" id="mno">Cancel</button><button class="btn pri" id="mok">OK</button></div></div></div>
 <script type="module">
 let S = { name:"", tag:"", bio:"", email:"", links:[], works:[], exp:[], ach:[] };
+let shown = [], lbI = 0;
 let edit = false, admin = false, dirty = false, filter = "All", loaded = false, aiOff = false;
 const files = new Map();
 const $ = (s) => document.querySelector(s);
@@ -96,10 +111,11 @@ const area = (k, v, ph) => `<textarea rows="2" data-k="${k}" placeholder="${ph}"
 function render() {
   const list = S.works.filter((w) => filter === "All" || w.cat === filter).sort((a, b) => (b.feat ? 1 : 0) - (a.feat ? 1 : 0) || b.ts - a.ts);
   const idx = (w) => S.works.indexOf(w);
+  shown = list;
   let h = `<section class="hero"><small>${esc(S.tag)}</small><h1>${edit ? inp("name", S.name, "Name") : esc(S.name)}</h1>${edit ? area("bio", S.bio, "Short intro") : `<p>${esc(S.bio)}</p>`}</section>`;
   h += `<h2 id="work">Selected work</h2>`;
   if (cats().length) h += `<div class="chips">${["All", ...cats()].map((c) => `<button class="chip ${c === filter ? "on" : ""}" data-f="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
-  h += list.length ? `<div class="grid">${list.map((w) => { const i = idx(w); return `<div class="card"><img src="${esc(w.url)}" alt="${esc(w.title)}" loading="lazy"><div class="b">${edit
+  h += list.length ? `<div class="grid">${list.map((w, j) => { const i = idx(w); return `<div class="card"><div class="pic" ${edit ? "" : `data-open="${j}"`}><img src="${esc(w.url)}" alt="${esc(w.title)}" draggable="false"></div><div class="b">${edit
       ? inp(`works.${i}.title`, w.title, "Title") + inp(`works.${i}.cat`, w.cat, "Category") + area(`works.${i}.desc`, w.desc, "Description") +
         `<label><input type="checkbox" style="width:auto" data-feat="${i}" ${w.feat ? "checked" : ""}> Feature at top</label> <button class="chip" data-gen="${i}">✨ Rewrite</button> <button class="chip" data-del="${i}">Delete</button>`
       : `<h3>${esc(w.title)}</h3><div class="m">${esc(w.cat)}${w.year ? " · " + esc(w.year) : ""}</div><p>${esc(w.desc)}</p>`}</div></div>`; }).join("")}</div>`
@@ -125,6 +141,11 @@ document.addEventListener("input", (e) => { const k = e.target.dataset.k; if (k)
 document.addEventListener("change", (e) => { if (e.target.dataset.feat) { S.works[+e.target.dataset.feat].feat = e.target.checked; dirty = true; } });
 document.addEventListener("click", (e) => {
   const t = e.target;
+  const pic = t.closest && t.closest("[data-open]");
+  if (pic && !edit) openLb(+pic.dataset.open);
+  if (t.id === "lbx" || t.id === "lb") closeLb();
+  if (t.id === "lbp") stepLb(-1);
+  if (t.id === "lbn") stepLb(1);
   if (t.dataset.f) { filter = t.dataset.f; render(); }
   if (t.id === "admin") unlock();
   if (t.id === "exit") { edit = false; render(); }
@@ -138,6 +159,24 @@ document.addEventListener("click", (e) => {
 });
 window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
 
+function showLb() {
+  const w = shown[lbI]; if (!w) return;
+  $("#lbi").src = w.url; $("#lbi").alt = w.title || "";
+  $("#lbc").innerHTML = `<b>${esc(w.title)}</b>${esc(w.desc)}`;
+  $("#lb").classList.remove("hide");
+  $("#lbp").classList.toggle("hide", shown.length < 2); $("#lbn").classList.toggle("hide", shown.length < 2);
+}
+function openLb(i) { lbI = i; showLb(); }
+function closeLb() { $("#lb").classList.add("hide"); $("#lbi").removeAttribute("src"); }
+function stepLb(d) { lbI = (lbI + d + shown.length) % shown.length; showLb(); }
+document.addEventListener("keydown", (e) => {
+  if ($("#lb").classList.contains("hide")) return;
+  if (e.key === "Escape") closeLb();
+  if (e.key === "ArrowLeft") stepLb(-1);
+  if (e.key === "ArrowRight") stepLb(1);
+});
+document.addEventListener("contextmenu", (e) => { if (!edit && e.target.closest && e.target.closest(".card .pic, #lb")) e.preventDefault(); });
+document.addEventListener("dragstart", (e) => { if (!edit && e.target.tagName === "IMG") e.preventDefault(); });
 async function unlock() {
   if (admin) { edit = true; render(); return; }
   const p = await ask("Enter your admin passcode:");
