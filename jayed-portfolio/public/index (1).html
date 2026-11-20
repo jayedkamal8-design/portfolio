@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jayed Kamal — Graphic Designer</title>
+<meta name="description" content="Portfolio of Jayed Kamal, a graphic designer: posters, social media designs, greetings and visuals.">
+<meta property="og:title" content="Jayed Kamal — Graphic Designer">
+<meta property="og:description" content="Posters, social media designs, greetings and visuals.">
+<style>
+:root{color-scheme:dark;--bg:#232323;--panel:#2f2f2f;--bar:#3a3a3a;--line:#4a4a4a;--tx:#e6e6e6;--mu:#a3a3a3;--ac:#31a8ff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M3 2l0 17 4.5-4 3 7 3-1.4-3-6.8 6 0z' fill='%23000' stroke='%23fff' stroke-width='1.3'/%3E%3Cpath d='M20 12v8M16 16h8' stroke='%23fff' stroke-width='3'/%3E%3Cpath d='M20 12v8M16 16h8' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E") 3 2,default}
+a,button,label{cursor:inherit}input,textarea{cursor:text}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.top{background:var(--bar);border-bottom:1px solid #111;font-size:13px;position:sticky;top:0;z-index:5}
+.top .wrap{display:flex;gap:18px;align-items:center;height:36px;overflow-x:auto;white-space:nowrap}
+.top b{color:var(--ac)}.top a{color:var(--mu);text-decoration:none}.top a:hover{color:var(--tx)}
+.hero{padding:72px 0 40px}.hero small{color:var(--ac);letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.1;margin:10px 0 14px;font-weight:700}
+.hero p{max-width:560px;color:var(--mu);font-size:17px;margin:0}
+h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:56px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.chip,.btn{background:var(--panel);border:1px solid var(--line);color:var(--tx);border-radius:4px;padding:5px 12px;font:inherit;font-size:13px}
+.chip.on,.btn.pri{background:var(--ac);border-color:var(--ac);color:#04121d;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#1a1a1a}
+.card .b{padding:12px 14px 14px}.card h3{margin:0 0 2px;font-size:16px}
+.card .m{color:var(--ac);font-size:12px;margin-bottom:6px}.card p{margin:0;color:var(--mu);font-size:14px}
+.row{display:grid;grid-template-columns:160px 1fr;gap:6px 24px;padding:14px 0;border-bottom:1px solid #333}
+.row .d{color:var(--mu);font-size:13px}.row h4{margin:0}.row p{margin:4px 0 0;color:var(--mu)}
+.links{display:flex;flex-wrap:wrap;gap:10px}
+.links a{color:var(--tx);border:1px solid var(--line);background:var(--panel);padding:7px 14px;border-radius:4px;text-decoration:none}
+.links a:hover{border-color:var(--ac);color:var(--ac)}
+footer{color:var(--mu);font-size:13px;padding:50px 0 60px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.empty{color:var(--mu);border:1px dashed var(--line);border-radius:6px;padding:28px;text-align:center}
+.adm{position:sticky;top:36px;z-index:4;background:#1b3a52;border-bottom:1px solid var(--ac);padding:8px 0}
+.adm .wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,textarea{width:100%;background:#1c1c1c;border:1px solid var(--line);color:var(--tx);border-radius:4px;padding:6px 8px;font:inherit;font-size:13px;margin:0 0 6px}
+.hide{display:none!important}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111;border:1px solid var(--ac);padding:9px 16px;border-radius:6px;font-size:13px;z-index:30;max-width:90vw}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:20;align-items:center;justify-content:center;padding:20px}
+#modal:not(.hide){display:flex}
+#modal .box{background:var(--panel);border:1px solid var(--ac);border-radius:8px;padding:20px;width:100%;max-width:380px}
+#modal p{margin:0 0 12px}#modal .acts{display:flex;gap:8px;justify-content:flex-end}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><b>Ps</b><a href="#work">Work</a><a href="#experience">Experience</a><a href="#achievements">Achievements</a><a href="#contact">Contact</a></div></div>
+<div class="adm hide" id="adm"><div class="wrap">
+<span>Edit mode · drag photos onto the page, or paste with Ctrl+V</span>
+<label class="btn">+ Add designs<input type="file" id="up" accept="image/*" multiple class="hide"></label>
+<button class="btn" id="auto">✨ Auto-write titles</button>
+<button class="btn pri" id="save">Save changes</button>
+<button class="btn" id="exit">Exit</button>
+<button class="btn" id="logout">Log out</button></div></div>
+<main class="wrap" id="app"></main>
+<div id="toast" class="hide"></div>
+<div id="modal" class="hide"><div class="box"><p id="mt"></p><input id="mi" type="password" autocomplete="off"><div class="acts"><button class="btn" id="mno">Cancel</button><button class="btn pri" id="mok">OK</button></div></div></div>
+<script type="module">
+let S = { name:"", tag:"", bio:"", email:"", links:[], works:[], exp:[], ach:[] };
+let edit = false, admin = false, dirty = false, filter = "All", loaded = false, aiOff = false;
+const files = new Map();
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const safeUrl = (u) => (/^(https?:|mailto:)/i.test(u) ? u : "#");
+
+function toast(t, ms) {
+  const e = $("#toast"); e.textContent = t; e.classList.remove("hide");
+  clearTimeout(toast.t); if (ms !== 0) toast.t = setTimeout(() => e.classList.add("hide"), ms || 3500);
+}
+async function api(path, method, body) {
+  const r = await fetch(path, { method: method || "GET", headers: body ? { "content-type": "application/json" } : undefined, body: body ? JSON.stringify(body) : undefined });
+  let d = {}; try { d = await r.json(); } catch {}
+  if (!r.ok) throw new Error(d.error || "Something went wrong (" + r.status + ")");
+  return d;
+}
+function ask(msg, o) {
+  o = o || {}; const yn = o.input === false;
+  return new Promise((res) => {
+    const m = $("#modal"), i = $("#mi");
+    $("#mt").textContent = msg; i.classList.toggle("hide", yn); i.value = ""; m.classList.remove("hide"); if (!yn) i.focus();
+    const done = (v) => { m.classList.add("hide"); $("#mok").onclick = $("#mno").onclick = i.onkeydown = null; res(v); };
+    $("#mok").onclick = () => done(yn ? true : i.value);
+    $("#mno").onclick = () => done(yn ? false : null);
+    i.onkeydown = (e) => { if (e.key === "Enter") done(i.value); if (e.key === "Escape") done(null); };
+  });
+}
+
+const cats = () => [...new Set(S.works.map((w) => w.cat).filter(Boolean))].sort();
+const inp = (k, v, ph) => `<input data-k="${k}" value="${esc(v)}" placeholder="${ph}">`;
+const area = (k, v, ph) => `<textarea rows="2" data-k="${k}" placeholder="${ph}">${esc(v)}</textarea>`;
+
+function render() {
+  const list = S.works.filter((w) => filter === "All" || w.cat === filter).sort((a, b) => (b.feat ? 1 : 0) - (a.feat ? 1 : 0) || b.ts - a.ts);
+  const idx = (w) => S.works.indexOf(w);
+  let h = `<section class="hero"><small>${esc(S.tag)}</small><h1>${edit ? inp("name", S.name, "Name") : esc(S.name)}</h1>${edit ? area("bio", S.bio, "Short intro") : `<p>${esc(S.bio)}</p>`}</section>`;
+  h += `<h2 id="work">Selected work</h2>`;
+  if (cats().length) h += `<div class="chips">${["All", ...cats()].map((c) => `<button class="chip ${c === filter ? "on" : ""}" data-f="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+  h += list.length ? `<div class="grid">${list.map((w) => { const i = idx(w); return `<div class="card"><img src="${esc(w.url)}" alt="${esc(w.title)}" loading="lazy"><div class="b">${edit
+      ? inp(`works.${i}.title`, w.title, "Title") + inp(`works.${i}.cat`, w.cat, "Category") + area(`works.${i}.desc`, w.desc, "Description") +
+        `<label><input type="checkbox" style="width:auto" data-feat="${i}" ${w.feat ? "checked" : ""}> Feature at top</label> <button class="chip" data-gen="${i}">✨ Rewrite</button> <button class="chip" data-del="${i}">Delete</button>`
+      : `<h3>${esc(w.title)}</h3><div class="m">${esc(w.cat)}${w.year ? " · " + esc(w.year) : ""}</div><p>${esc(w.desc)}</p>`}</div></div>`; }).join("")}</div>`
+    : `<div class="empty">${loaded ? (admin ? "No designs yet. Click “+ Add designs”." : "New work is coming soon.") : "Loading…"}</div>`;
+  const sect = (id, title, arr, key, fields) => {
+    if (!arr.length && !edit) return "";
+    let s = `<h2 id="${id}">${title}</h2>`;
+    s += arr.map((r, i) => edit
+      ? `<div class="card" style="padding:12px;margin-bottom:10px">${fields.map((f) => (f[2] ? area : inp)(`${key}.${i}.${f[0]}`, r[f[0]], f[1])).join("")}<button class="chip" data-rm="${key}.${i}">Remove</button></div>`
+      : `<div class="row"><div class="d">${esc(r.when)}</div><div><h4>${esc(r.title)}${r.org ? " · " + esc(r.org) : ""}</h4>${r.desc ? `<p>${esc(r.desc)}</p>` : ""}</div></div>`).join("");
+    return s + (edit ? `<button class="btn" data-add="${key}">+ Add</button>` : "");
+  };
+  h += sect("experience", "Experience", S.exp, "exp", [["title", "Role"], ["org", "Company / client"], ["when", "Dates, e.g. 2023 – Present"], ["desc", "What you did", 1]]);
+  h += sect("achievements", "Achievements", S.ach, "ach", [["title", "Achievement"], ["when", "Year"], ["desc", "Details", 1]]);
+  h += `<h2 id="contact">Contact</h2><div class="links"><a href="mailto:${esc(S.email)}">${esc(S.email)}</a>${S.links.map((l) => `<a href="${esc(safeUrl(l[1]))}" target="_blank" rel="noopener">${esc(l[0])}</a>`).join("")}</div>`;
+  h += `<footer><span>© ${new Date().getFullYear()} ${esc(S.name)}</span>${!edit ? `<button class="chip" id="admin">Admin</button>` : ""}</footer>`;
+  $("#app").innerHTML = h;
+  $("#adm").classList.toggle("hide", !edit);
+}
+
+const setPath = (p, v) => { const k = p.split("."); let o = S; k.slice(0, -1).forEach((x) => (o = o[x])); o[k[k.length - 1]] = v; dirty = true; };
+document.addEventListener("input", (e) => { const k = e.target.dataset.k; if (k) setPath(k, e.target.value); });
+document.addEventListener("change", (e) => { if (e.target.dataset.feat) { S.works[+e.target.dataset.feat].feat = e.target.checked; dirty = true; } });
+document.addEventListener("click", (e) => {
+  const t = e.target;
+  if (t.dataset.f) { filter = t.dataset.f; render(); }
+  if (t.id === "admin") unlock();
+  if (t.id === "exit") { edit = false; render(); }
+  if (t.id === "logout") logout();
+  if (t.dataset.del) { const i = +t.dataset.del; ask("Delete this design?", { input: false }).then((ok) => { if (ok) { S.works.splice(i, 1); dirty = true; render(); } }); }
+  if (t.dataset.gen) gen(S.works[+t.dataset.gen]).then(() => render());
+  if (t.dataset.rm) { const [k, i] = t.dataset.rm.split("."); S[k].splice(+i, 1); dirty = true; render(); }
+  if (t.dataset.add) { S[t.dataset.add].push({ title: "", org: "", when: "", desc: "" }); dirty = true; render(); }
+  if (t.id === "auto") autoAll();
+  if (t.id === "save") save();
+});
+window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+async function unlock() {
+  if (admin) { edit = true; render(); return; }
+  const p = await ask("Enter your admin passcode:");
+  if (!p) return;
+  try { await api("/api/auth", "POST", { password: p }); admin = true; edit = true; render(); }
+  catch (e) { toast(e.message); }
+}
+async function logout() {
+  if (dirty && !(await ask("You have unsaved changes. Log out anyway?", { input: false }))) return;
+  try { await api("/api/auth", "DELETE"); } catch {}
+  admin = false; edit = false; dirty = false; render();
+}
+async function save() {
+  try { toast("Saving…", 0); await api("/api/save", "POST", S); dirty = false; toast("Saved! Your live site is updated."); }
+  catch (e) { toast("Couldn't save: " + e.message, 7000); }
+}
+
+async function previewOf(src) {
+  const bmp = await createImageBitmap(src);
+  const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.8).split(",")[1];
+}
+async function gen(w) {
+  if (aiOff) { toast("Auto titles are switched off. Type a title and description in the boxes on the card.", 6000); return false; }
+  try {
+    let src = files.get(w.url);
+    if (!src) src = await (await fetch(w.url)).blob();
+    const r = await api("/api/describe", "POST", { image: await previewOf(src), cats: cats() });
+    Object.assign(w, { title: r.title, desc: r.desc, cat: r.cat }); dirty = true; return true;
+  } catch (e) {
+    if (/ANTHROPIC_API_KEY/.test(e.message)) { aiOff = true; return false; }
+    toast("Couldn't write that one: " + e.message, 7000); return false;
+  }
+}
+async function autoAll() {
+  if (aiOff) { toast("Auto titles are switched off. Type a title and description in the boxes on each card.", 7000); return; }
+  const todo = S.works.filter((w) => w.title === "Untitled design" || !w.desc); let i = 0;
+  for (const w of todo) { if (aiOff) break; toast(`Writing ${++i} of ${todo.length}…`, 0); await gen(w); }
+  render();
+  if (aiOff) toast("Auto titles are switched off. Type a title and description in the boxes on each card.", 7000);
+  else toast(todo.length ? "Done. Check the titles, then press Save changes." : "Everything already has a title.");
+}
+async function prepare(f) {
+  if (f.size <= 4e6 && /^image\/(jpeg|png|webp|gif)$/.test(f.type)) return { blob: f, type: f.type, name: f.name };
+  const bmp = await createImageBitmap(f);
+  let k = Math.min(1, 2400 / Math.max(bmp.width, bmp.height)), q = 0.88, out;
+  for (let i = 0; i < 6; i++) {
+    const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(bmp, 0, 0, c.width, c.height);
+    out = await new Promise((r) => c.toBlob(r, "image/jpeg", q));
+    if (out && out.size <= 4e6) break;
+    q -= 0.08; k *= 0.85;
+  }
+  return { blob: out, type: "image/jpeg", name: f.name.replace(/\.[^.]+$/, "") + ".jpg" };
+}
+async function addFiles(list) {
+  const fl = [...list].filter((f) => f.type.startsWith("image/"));
+  if (!edit || !fl.length) return;
+  let n = 0, added = 0;
+  for (const f of fl) {
+    try {
+      toast(`Uploading ${++n} of ${fl.length}…`, 0);
+      const p = await prepare(f);
+      const r = await fetch("/api/upload", { method: "POST", headers: { "content-type": "application/octet-stream", "x-file-type": p.type, "x-file-name": encodeURIComponent(p.name) }, body: p.blob });
+      let b = {}; try { b = await r.json(); } catch {}
+      if (!r.ok) throw new Error(b.error || "Upload failed (" + r.status + ")");
+      files.set(b.url, f);
+      S.works.push({ url: b.url, title: "Untitled design", cat: "Uncategorized", desc: "", year: String(new Date().getFullYear()), ts: Date.now() + n, feat: false });
+      dirty = true; added++;
+    } catch (e) { toast("Upload failed: " + e.message + "  (tap this message to close it)", 0); }
+  }
+  render();
+  if (added) {
+    await autoAll();
+    await save();
+    toast(`Added ${added} design${added > 1 ? "s" : ""} and saved.` + (aiOff ? " Now type a title and description on each card, then press Save changes." : ""), 9000);
+  }
+}
+$("#up").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
+document.addEventListener("dragover", (e) => e.preventDefault());
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (!edit) { toast("First click Admin at the very bottom of the page and enter your passcode.", 7000); return; }
+  addFiles(e.dataTransfer.files);
+});
+$("#toast").addEventListener("click", () => $("#toast").classList.add("hide"));
+document.addEventListener("paste", (e) => { if (edit && e.clipboardData) addFiles(e.clipboardData.files); });
+
+render();
+try { S = await api("/api/site"); } catch (e) { toast("Couldn't load the site: " + e.message, 7000); }
+loaded = true;
+try { admin = (await api("/api/auth")).admin; } catch {}
+render();
+</script>
+</body>
+</html>
