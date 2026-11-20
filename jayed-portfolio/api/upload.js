@@ -1,5 +1,5 @@
 import { put } from "@vercel/blob";
-import { isAdmin } from "./_lib.js";
+import { isAdmin, blobToken } from "./_lib.js";
 
 const OK_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_BYTES = 4.4 * 1024 * 1024;
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     const body = await bodyBuffer(req);
     if (!body.length) return res.status(400).json({ error: "The picture arrived empty. Please try again." });
     if (body.length > MAX_BYTES) return res.status(413).json({ error: "That picture is too big even after shrinking." });
-    const blob = await put("designs/" + name, body, { access: "public", addRandomSuffix: true, contentType: type });
+    const blob = await put("designs/" + name, body, { token: blobToken(), access: "public", addRandomSuffix: true, contentType: type });
     res.status(200).json({ url: blob.url });
   } catch (e) {
     res.status(500).json({ error: e.message || "Upload failed." });

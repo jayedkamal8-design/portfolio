@@ -2,6 +2,12 @@ import crypto from "node:crypto";
 import { put, list } from "@vercel/blob";
 
 const WEEK = 7 * 24 * 3600;
+// Vercel sometimes names the storage key with a prefix (e.g. STORAGE_READ_WRITE_TOKEN). Find it either way.
+export function blobToken() {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
+  const k = Object.keys(process.env).find((n) => /READ_WRITE_TOKEN$/.test(n));
+  return k ? process.env[k] : undefined;
+}
 const secret = () => process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
 const sign = (v) => crypto.createHmac("sha256", secret()).update(v).digest("hex");
 
@@ -48,7 +54,7 @@ export const DEFAULT_SITE = {
 
 export async function readSite() {
   try {
-    const { blobs } = await list({ prefix: "site.json", limit: 1 });
+    const { blobs } = await list({ prefix: "site.json", limit: 1, token: blobToken() });
     if (!blobs.length) return DEFAULT_SITE;
     const r = await fetch(blobs[0].url + "?t=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return DEFAULT_SITE;
@@ -60,6 +66,7 @@ export async function readSite() {
 
 export async function writeSite(site) {
   await put("site.json", JSON.stringify(site), {
+    token: blobToken(),
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
