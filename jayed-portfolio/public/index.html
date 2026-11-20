@@ -211,7 +211,7 @@ function render() {
   h += `</div>`;
 
   const A = S.about, skills = (A.skills || "").split(",").map((s) => s.trim()).filter(Boolean);
-  if (edit || A.photo || A.text || skills.length) {
+  {
     h += head("about", "About");
     h += `<div class="panel">`;
     if (edit) {
@@ -219,27 +219,31 @@ function render() {
         <div class="pickrow"><button class="btn" data-pick="about">${A.photo ? "Change photo" : "+ Add photo"}</button>${A.photo ? `<button class="chip" data-clear="about">Remove photo</button>` : ""}</div>
         ${area("about.text", A.text, "Write about yourself: who you are, what you design, what you love…", 6)}
         ${inp("about.skills", A.skills, "Skills, separated by commas (Posters, Branding, Photoshop…)")}</div></div>`;
+    } else if (!A.photo && !A.text && !skills.length) {
+      h += `<div class="empty">About me is coming soon.</div>`;
     } else {
       h += `<div class="about ${A.photo ? "" : "solo"}">${A.photo ? `<div class="ants"><div class="pic" data-lb="about"><img src="${esc(A.photo)}" alt="${esc(S.name)}" draggable="false"></div></div>` : ""}<div><div class="txt">${esc(A.text)}</div>${skills.length ? `<div class="tags">${skills.map((s, i) => `<span><i style="background:${SW[i % SW.length]}"></i>${esc(s)}</span>`).join("")}</div>` : ""}</div></div>`;
     }
     h += `</div>`;
   }
 
-  if (S.ach.length || edit) {
+  {
     h += head("achievements", "Achievements", S.ach.length) + `<div class="panel">`;
     h += S.ach.map((r, i) => edit
       ? `<div class="card" style="padding:12px;margin-bottom:10px">${inp(`ach.${i}.title`, r.title, "Achievement")}${inp(`ach.${i}.when`, r.when, "Year")}${area(`ach.${i}.desc`, r.desc, "Details")}
          ${r.img ? `<div style="max-width:160px;margin-bottom:6px" class="pic"><img src="${esc(r.img)}" alt="" draggable="false"></div>` : ""}
          <div class="pickrow"><button class="chip" data-pick="ach.${i}">${r.img ? "Change picture" : "+ Add picture"}</button>${r.img ? `<button class="chip" data-clear="ach.${i}">Remove picture</button>` : ""}<button class="chip" data-rm="ach.${i}">Remove achievement</button></div></div>`
       : `<div class="layer"><span class="eye">${EYE}</span><div class="thumb">${r.img ? `<div class="pic" data-lb="ach.${i}"><img src="${esc(r.img)}" alt="${esc(r.title)}" draggable="false"></div>` : STAR}</div><div><h4>${esc(r.title)}${r.when ? `<span class="yr">${esc(r.when)}</span>` : ""}</h4>${r.desc ? `<p>${esc(r.desc)}</p>` : ""}</div></div>`).join("");
+    if (!S.ach.length && !edit) h += `<div class="empty">Achievements are coming soon.</div>`;
     h += (edit ? `<button class="btn" data-add="ach">+ Add achievement</button>` : "") + `</div>`;
   }
 
-  if (S.exp.length || edit) {
+  {
     h += head("experience", "Experience", S.exp.length) + `<div class="panel">`;
     h += S.exp.map((r, i) => edit
       ? `<div class="card" style="padding:12px;margin-bottom:10px">${inp(`exp.${i}.title`, r.title, "Role")}${inp(`exp.${i}.org`, r.org, "Company / client")}${inp(`exp.${i}.when`, r.when, "Dates, e.g. 2023 – Present")}${area(`exp.${i}.desc`, r.desc, "What you did")}<button class="chip" data-rm="exp.${i}">Remove</button></div>`
       : `<div class="row"><div class="d">${esc(r.when)}</div><div><h4>${esc(r.title)}${r.org ? " · " + esc(r.org) : ""}</h4>${r.desc ? `<p>${esc(r.desc)}</p>` : ""}</div></div>`).join("");
+    if (!S.exp.length && !edit) h += `<div class="empty">Experience is coming soon.</div>`;
     h += (edit ? `<button class="btn" data-add="exp">+ Add experience</button>` : "") + `</div>`;
   }
 
@@ -248,7 +252,6 @@ function render() {
   $("#app").innerHTML = h;
   $("#adm").classList.toggle("hide", !edit);
   document.documentElement.style.scrollPaddingTop = edit ? "110px" : "56px";
-  for (const a of document.querySelectorAll("[data-nav]")) a.classList.toggle("hide", !document.getElementById(a.dataset.nav));
 }
 
 const setPath = (p, v) => { const k = p.split("."); let o = S; k.slice(0, -1).forEach((x) => (o = o[x])); o[k[k.length - 1]] = v; dirty = true; };
