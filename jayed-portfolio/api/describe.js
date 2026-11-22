@@ -1,6 +1,6 @@
 import { isAdmin } from "./_lib.js";
 
-const NO_KEY = "No AI key is set yet (add ANTHROPIC_API_KEY, or LLAMA_API_KEY plus LLAMA_MODEL, in Vercel).";
+const NO_KEY = "No AI key is set yet. In Vercel add XAI_API_KEY (Grok), or LLAMA_API_KEY plus LLAMA_MODEL (Meta), or ANTHROPIC_API_KEY.";
 
 function buildPrompt(cats) {
   const known = Array.isArray(cats) ? cats.filter((c) => typeof c === "string").slice(0, 20).join(", ") : "";
@@ -11,13 +11,13 @@ function buildPrompt(cats) {
   );
 }
 
-async function viaMeta(image, prompt) {
-  const base = (process.env.LLAMA_BASE_URL || "https://api.llama.com/compat/v1").replace(/\/$/, "");
+async function viaOpenAIStyle(name, base, key, model, image, prompt) {
+  base = base.replace(/\/$/, "");
   const r = await fetch(base + "/chat/completions", {
     method: "POST",
-    headers: { "content-type": "application/json", authorization: "Bearer " + process.env.LLAMA_API_KEY },
+    headers: { "content-type": "application/json", authorization: "Bearer " + key },
     body: JSON.stringify({
-      model: process.env.LLAMA_MODEL,
+      model,
       max_tokens: 400,
       messages: [
         {
@@ -31,7 +31,7 @@ async function viaMeta(image, prompt) {
     }),
   });
   const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error((data.error && (data.error.message || data.error)) || data.message || "Meta AI refused the request (" + r.status + ").");
+  if (!r.ok) throw new Error((data.error && (data.error.message || data.error)) || data.message || name + " refused the request (" + r.status + ").");
   const c = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
   const text = typeof c === "string" ? c : (data.completion_message && data.completion_message.content && data.completion_message.content.text) || "";
   return text;
@@ -55,15 +55,20 @@ async function viaAnthropic(image, prompt) {
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
   if (!isAdmin(req)) return res.status(401).json({ error: "Please log in as admin first." });
-  const useMeta = !!(process.env.LLAMA_API_KEY && process.env.LLAMA_MODEL);
-  if (!useMeta && !process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: NO_KEY });
+  const useGrok = !!process.env.XAI_API_KEY;
+  const useMeta = !useGrok && !!(process.env.LLAMA_API_KEY && process.env.LLAMA_MODEL);
+  if (!useGrok && !useMeta && !process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: NO_KEY });
   const { image, cats } = req.body || {};
   if (typeof image !== "string" || image.length < 100 || image.length > 3000000) {
     return res.status(400).json({ error: "Missing or too-large preview image." });
   }
   try {
     const prompt = buildPrompt(cats);
-    const text = useMeta ? await viaMeta(image, prompt) : await viaAnthropic(image, prompt);
+    const text = useGrok
+      ? await viaOpenAIStyle("Grok", process.env.XAI_BASE_URL || "https://api.x.ai/v1", process.env.XAI_API_KEY, process.env.XAI_MODEL || "grok-4", image, prompt)
+      : useMeta
+        ? await viaOpenAIStyle("Meta AI", process.env.LLAMA_BASE_URL || "https://api.llama.com/compat/v1", process.env.LLAMA_API_KEY, process.env.LLAMA_MODEL, image, prompt)
+        : await viaAnthropic(image, prompt);
     const m = /\{[\s\S]*\}/.exec(text || "");
     if (!m) return res.status(502).json({ error: "The AI reply could not be read. Try again." });
     const out = JSON.parse(m[0]);
